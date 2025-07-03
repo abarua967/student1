@@ -1,34 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-class PeriodModel {
-  final String subject;
-  final String time;
-  final String teacher;
-
-  PeriodModel({
-    required this.subject,
-    required this.time,
-    required this.teacher,
-  });
-
-  factory PeriodModel.fromJson(Map<String, dynamic> json) {
-    return PeriodModel(
-      subject: json['subject'] ?? '',
-      time: json['time'] ?? '',
-      teacher: json['teacher'] ?? '',
-    );
-  }
-
-  Map<String, String> toMap() {
-    return {
-      'subject': subject,
-      'time': time,
-      'teacher': teacher,
-    };
-  }
-}
-
+import'package:student1/time-table_model.dart';
 
 class TimetablePage extends StatefulWidget {
   const TimetablePage({super.key});
