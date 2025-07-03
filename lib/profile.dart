@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
-// Student data model with nullable fields
 class Student {
   final String? name;
   final String? classSection;
@@ -56,27 +57,90 @@ class Student {
   }
 }
 
-// Fetch API data
 Future<Student> fetchStudentProfile() async {
-  final response = await http.get(Uri.parse('https://yourapi.com/student/profile')); // Replace with your endpoint
+  const String apiUrl = '';
 
-  if (response.statusCode == 200) {
-    return Student.fromJson(jsonDecode(response.body));
-  } else {
-    throw Exception('Failed to load student profile');
+  if (apiUrl.isEmpty) {
+    return Student(
+      name: 'Abhishek Sharma',
+      classSection: '10-B',
+      rollNumber: '12',
+      aadhaar: '1234-5678-9012',
+      academicYear: '2024-2025',
+      admissionClass: 'Nursery',
+      oldAdmissionNumber: 'ADM1234',
+      dateOfAdmission: '10 Jun 2012',
+      dateOfBirth: '12 Jan 2007',
+      parentEmail: 'parent@example.com',
+      motherName: 'B Sharma',
+      fatherName: 'A Sharma',
+      address: '123, Model Town, Kolkata',
+      imagePath: '',
+    );
+  }
+
+  try {
+    final response = await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      return Student.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('API returned error: ${response.statusCode}');
+    }
+  } catch (e) {
+    debugPrint('API error: $e');
+    return Student(
+      name: "Abhishek Sharma",
+      classSection: '10-B',
+      rollNumber: '12',
+      aadhaar: '1234-5678-9012',
+      academicYear: '2024-2025',
+      admissionClass: 'Nursery',
+      oldAdmissionNumber: 'ADM1234',
+      dateOfAdmission: '10 Jun 2012',
+      dateOfBirth: '12 Jan 2007',
+      parentEmail: 'parent@example.com',
+      motherName: 'B Sharma',
+      fatherName: 'A Sharma',
+      address: '123, Model Town, Kolkata',
+      imagePath: '',
+    );
   }
 }
 
-// Student Profile Page
-class StudentProfile extends StatelessWidget {
+class StudentProfile extends StatefulWidget {
   const StudentProfile({super.key});
 
+  @override
+  State<StudentProfile> createState() => _StudentProfileState();
+}
+
+class _StudentProfileState extends State<StudentProfile> {
+  late Future<Student> _futureStudent;
+  File? _pickedImage;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureStudent = fetchStudentProfile();
+  }
+
   String safe(String? value) => value ?? 'NULL';
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      setState(() {
+        _pickedImage = File(pickedFile.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Student>(
-      future: fetchStudentProfile(),
+      future: _futureStudent,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -86,10 +150,12 @@ class StudentProfile extends StatelessWidget {
           return const Scaffold(body: Center(child: Text('No data found')));
         } else {
           final student = snapshot.data!;
+
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Profile', style: TextStyle(fontSize: 30, color: Colors.white)),
-              backgroundColor: Colors.blue,
+              title: const Text('Profile', style: TextStyle(fontSize: 20, color: Colors.white)),
+              backgroundColor: Colors.blue[800],
+              leading: const BackButton(color: Colors.white),
               centerTitle: true,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
@@ -108,19 +174,48 @@ class StudentProfile extends StatelessWidget {
                         height: 100,
                         width: 300,
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.purple, width: 1),
+                          border: Border.all(color: Colors.blue, width: 1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            SizedBox(
-                              height: 70,
-                              width: 70,
-                              child: (student.imagePath != null && student.imagePath!.startsWith('http'))
-                                  ? Image.network(student.imagePath!, fit: BoxFit.cover)
-                                  : Image.asset(student.imagePath ?? 'assets/default.png', fit: BoxFit.cover),
+                            GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return GestureDetector(
+                                      onTap: () => Navigator.of(context).pop(),
+                                      child: Dialog(
+                                        backgroundColor: Colors.transparent,
+                                        insetPadding: const EdgeInsets.all(10),
+                                        child: Center(
+                                          child: _pickedImage != null
+                                              ? Image.file(_pickedImage!, fit: BoxFit.contain)
+                                              : (student.imagePath != null && student.imagePath!.startsWith('http'))
+                                              ? Image.network(student.imagePath!, fit: BoxFit.contain)
+                                              : Image.asset('assets/images/default.png', fit: BoxFit.contain),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: SizedBox(
+                                height: 70,
+                                width: 70,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(5),
+                                  child: _pickedImage != null
+                                      ? Image.file(_pickedImage!, fit: BoxFit.cover)
+                                      : (student.imagePath != null && student.imagePath!.startsWith('http'))
+                                      ? Image.network(student.imagePath!, fit: BoxFit.cover)
+                                      : Image.asset('assets/images/default.png', fit: BoxFit.cover),
+                                ),
+                              ),
                             ),
+
                             const SizedBox(width: 10),
                             Expanded(
                               child: Column(
@@ -133,17 +228,20 @@ class StudentProfile extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
-                                    '${safe(student.classSection)} | ${safe(student.rollNumber)}',
+                                    '${safe(student.classSection)} |Roll No. ${safe(student.rollNumber)}',
                                     style: const TextStyle(color: Colors.grey),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
                             ),
-                            const Column(
+                            Column(
                               children: [
-                                SizedBox(height: 10),
-                                Icon(Icons.camera_alt_outlined),
+                                const SizedBox(height: 10),
+                                IconButton(
+                                  icon: const Icon(Icons.camera_alt_outlined),
+                                  onPressed: _pickImage,
+                                )
                               ],
                             ),
                           ],
@@ -174,22 +272,40 @@ class StudentProfile extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label1, style: const TextStyle(color: Colors.grey)),
-              Text(value1, style: const TextStyle(fontSize: 18)),
-              Container(height: 1, width: 180, color: Colors.grey),
-            ],
+          SizedBox(
+            width: 180,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label1, style: const TextStyle(color: Colors.grey)),
+                const SizedBox(height: 5),
+                Row(
+                  children: [
+                    Expanded(child: Text(value1, style: const TextStyle(fontSize: 14))),
+                    const Icon(Icons.lock_outline, size: 16, color: Colors.grey),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Container(height: 1, color: Colors.grey),
+              ],
+            ),
           ),
           const SizedBox(width: 15),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label2, style: const TextStyle(color: Colors.grey)),
-              Text(value2, style: const TextStyle(fontSize: 18)),
-              Container(height: 1, width: 150, color: Colors.grey),
-            ],
+          SizedBox(
+            width: 150,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label2, style: const TextStyle(color: Colors.grey)),
+                Row(
+                  children: [
+                    Expanded(child: Text(value2, style: const TextStyle(fontSize: 14))),
+                    const Icon(Icons.lock_outline, size: 16, color: Colors.grey),
+                  ],
+                ),
+                Container(height: 1, color: Colors.grey),
+              ],
+            ),
           ),
         ],
       ),
@@ -203,8 +319,18 @@ class StudentProfile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(label, style: const TextStyle(color: Colors.grey)),
-          Text(value, style: const TextStyle(fontSize: 18)),
-          Container(height: 1, width: 350, color: Colors.grey),
+          const SizedBox(height: 5),
+          SizedBox(
+            width: 340,
+            child: Row(
+              children: [
+                Expanded(child: Text(value, style: const TextStyle(fontSize: 14))),
+                const Icon(Icons.lock_outline, size: 16, color: Colors.grey),
+              ],
+            ),
+          ),
+          const SizedBox(height: 5),
+          Container(height: 1, width: 340, color: Colors.grey),
         ],
       ),
     );

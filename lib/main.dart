@@ -12,6 +12,8 @@ import 'package:student1/digital_locker.dart';
 import 'package:student1/profile2.dart';
 import 'package:student1/attendance2.dart';
 import 'package:student1/Events.dart';
+
+import 'Digital_Locker1.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -224,7 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             else if(item['title']=='Digital Locker'){
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const DocumentsPage()),
+                                MaterialPageRoute(builder: (context) => const DigitalLockerPage()),
                               );
                             }
                             else if(item['title']=='Events'){
