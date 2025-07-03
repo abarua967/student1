@@ -13,21 +13,21 @@ class DigitalLockerPage extends StatelessWidget {
         backgroundColor: Colors.blue[800],
         leading: const BackButton(color: Colors.white),
         centerTitle: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-        ),
+        // shape: const RoundedRectangleBorder(
+        //   borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+        // ),
       ),
       body: Column(
         children: [
-          SizedBox(height: 40,),
+          //SizedBox(height: 40,),
           // Top Image
           Container(
             width: double.infinity,
             height: 180,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/locker.png'), // <- replace with your banner
-                fit: BoxFit.contain,
+                image: AssetImage('assets/images/img.png'), // <- replace with your banner
+                fit: BoxFit.fitWidth,
               ),
             ),
           ),
