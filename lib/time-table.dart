@@ -1,6 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+class PeriodModel {
+  final String subject;
+  final String time;
+  final String teacher;
+
+  PeriodModel({
+    required this.subject,
+    required this.time,
+    required this.teacher,
+  });
+
+  factory PeriodModel.fromJson(Map<String, dynamic> json) {
+    return PeriodModel(
+      subject: json['subject'] ?? '',
+      time: json['time'] ?? '',
+      teacher: json['teacher'] ?? '',
+    );
+  }
+
+  Map<String, String> toMap() {
+    return {
+      'subject': subject,
+      'time': time,
+      'teacher': teacher,
+    };
+  }
+}
+
 
 class TimetablePage extends StatefulWidget {
   const TimetablePage({super.key});
@@ -51,17 +79,21 @@ class _TimetablePageState extends State<TimetablePage>
         await http.get(Uri.parse('https://your-api.com/timetable'));
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
+
           setState(() {
             timetable = {
               for (var day in days)
-                day: List<Map<String, String>>.from(data[day] ?? [])
+                day: (data[day] as List<dynamic>? ?? [])
+                    .map((item) => PeriodModel.fromJson(item).toMap())
+                    .toList()
             };
             isLoading = false;
           });
         } else {
           throw Exception('Failed to load timetable');
         }
-      } else {
+      }
+      else {
         setState(() {
           timetable = {
             "Mon": [

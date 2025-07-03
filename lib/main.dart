@@ -11,6 +11,7 @@ import 'package:student1/results.dart';
 import 'package:student1/digital_locker.dart';
 import 'package:student1/profile2.dart';
 import 'package:student1/attendance2.dart';
+import 'package:student1/Events.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -55,6 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
     {'title': 'Class Timetable','imagePath': 'assets/images/administration.png'},
     {'title': 'Inquiry','imagePath': 'assets/images/inquiry.png'},
     {'title': 'Digital Locker','imagePath':'assets/images/digital.png'},
+    {'title': 'Events','imagePath':'assets/images/newspaper.png'},
   ];
 
   @override
@@ -223,6 +225,12 @@ class _MyHomePageState extends State<MyHomePage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) => const DocumentsPage()),
+                              );
+                            }
+                            else if(item['title']=='Events'){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) =>  EventsPage()),
                               );
                             }
                             // You can add other conditions here if you want to navigate to other pages later.

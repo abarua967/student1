@@ -188,8 +188,14 @@ class _AssignmentsState extends State<Assignments> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Assignments', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blue[800],
+        leading: const BackButton(color: Colors.white,),
         centerTitle: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(30),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),

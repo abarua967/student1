@@ -26,10 +26,12 @@ class _NoticeBoardState extends State<NoticeBoard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notice Board', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.blue[800],
+        centerTitle: true,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
         ),
+        leading: const BackButton(color: Colors.white,),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(10),

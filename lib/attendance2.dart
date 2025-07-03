@@ -11,6 +11,34 @@ class AttendanceCalendarPage extends StatefulWidget {
 }
 
 class _AttendanceCalendarPageState extends State<AttendanceCalendarPage> {
+  Widget _buildToggleOption(String title, bool value) {
+    final bool isSelected = isAttendanceView == value;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            isAttendanceView = value;
+          });
+        },
+        child: Container(
+          height: 40,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.blueGrey : Colors.white,
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: Text(
+            title,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.blueGrey,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   bool isAttendanceView = true;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -42,19 +70,33 @@ class _AttendanceCalendarPageState extends State<AttendanceCalendarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Attendance"),
-        backgroundColor: Colors.blue,
-        centerTitle: true,
-        actions: [
-          TextButton(
-            onPressed: () => setState(() => isAttendanceView = true),
-            child: Text("ATTENDANCE", style: TextStyle(color: isAttendanceView ? Colors.white : Colors.white70)),
+        backgroundColor: Colors.blue[800],
+        leading: const BackButton(color: Colors.white,),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(30),
           ),
-          TextButton(
-            onPressed: () => setState(() => isAttendanceView = false),
-            child: Text("HOLIDAY", style: TextStyle(color: !isAttendanceView ? Colors.white : Colors.white70)),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 60),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Row(
+                children: [
+                  _buildToggleOption("ATTENDANCE", true),
+                  _buildToggleOption("HOLIDAY", false),
+                ],
+              ),
+            ),
           ),
-        ],
+        ),
+
       ),
       body: Column(
         children: [
