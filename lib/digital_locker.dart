@@ -92,7 +92,7 @@ class _DocumentsPageState extends State<DocumentsPage> {
               errorBuilder: (context, error, stackTrace) =>
               const Icon(Icons.image_not_supported),
             )
-                : const Icon(Icons.school, size: 50),
+                :  Image.asset('assets/images/cisce-logo.png')
           ),
           const SizedBox(width: 16),
           Expanded(

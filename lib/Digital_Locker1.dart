@@ -47,21 +47,30 @@ class DigitalLockerPage extends StatelessWidget {
             child: Column(
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    InkWell(
-                        onTap:(){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const DocumentsPage()),
-                          );
-                        },
-                        child: SizedBox(
-                        width: 175,
-                        child: _buildLockerTile(context, Icons.description, 'Issued\nDocuments'))),
-                    const SizedBox(width: 16),
-                    _buildLockerTile(context, Icons.school, 'Personal\nUploads'),
+                    _buildLockerTile(
+                      context,
+                      Icons.description,
+                      'Issued\nDocuments',
+                          () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const DocumentsPage()),
+                        );
+                      },
+                    ),
+                    _buildLockerTile(
+                      context,
+                      Icons.school,
+                      'Personal\nUploads',
+                          () {
+
+                      },
+                    ),
                   ],
                 ),
+
                 const SizedBox(height: 16),
                 Row(
                   children: [
@@ -99,31 +108,31 @@ class DigitalLockerPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLockerTile(BuildContext context, IconData icon, String label) {
-    return Expanded(
-      child: Container(
-        height: 100,
-        decoration: BoxDecoration(
-          color: Colors.blue[50],
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: InkWell(
-          onTap: () {},
-          borderRadius: BorderRadius.circular(12),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 30, color: Colors.blue[700]),
-              const SizedBox(height: 8),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
+  Widget _buildLockerTile(BuildContext context, IconData icon, String label, VoidCallback onTap) {
+    return Container(
+      width: 160,
+      height: 100,
+      decoration: BoxDecoration(
+        color: Colors.blue[50],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 30, color: Colors.blue[700]),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+          ],
         ),
       ),
     );
   }
+
 }
