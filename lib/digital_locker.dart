@@ -1,7 +1,27 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import'package:student1/digital_locker_model.dart';
+
+class Document {
+  final String? name;
+  final String? description;
+  final String? logoUrl;
+
+  Document({
+    this.name,
+    this.description,
+    this.logoUrl,
+  });
+
+  factory Document.fromJson(Map<String, dynamic> json) {
+    return Document(
+      name: json['name'],
+      description: json['description'],
+      logoUrl: json['logoUrl'],
+    );
+  }
+}
+
 
 class DocumentsPage extends StatefulWidget {
   const DocumentsPage({super.key});
